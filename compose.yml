@@ -84,7 +84,12 @@ services:
       PORT: 3555
       NODE_ENV: development
       LOCALSTACK_ENDPOINT: http://localstack:4566
-      MONGO_URI: mongodb://mongodb:27017/
+      MONGO_URI: ${MONGO_URI}
+      MONGO_DATABASE: ${MONGO_DATABASE}
+      COLLECTION_NAME: ${COLLECTION_NAME}
+      INDEX_NAME: ${INDEX_NAME}
+      SEARCH_ENDPOINT: ${SEARCH_ENDPOINT}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     networks:
       - cdp-tenant
 

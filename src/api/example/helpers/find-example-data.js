@@ -7,7 +7,7 @@
  */
 function findExampleData(db, id) {
   return db
-    .collection('example-data')
+    .collection('documents')
     .findOne({ exampleId: id }, { projection: { _id: 0 } })
 }
 

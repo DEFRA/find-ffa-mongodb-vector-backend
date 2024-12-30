@@ -9,6 +9,8 @@ coverage
 .cache
 .eslintcache
 
+aws.env
+
 # @shelf/jest-mongodb generated file
 globalConfig.json
 

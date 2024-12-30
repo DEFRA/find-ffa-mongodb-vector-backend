@@ -91,6 +91,30 @@ const config = convict({
     default: 'find-ffa-mongodb-vector-backend',
     env: 'MONGO_DATABASE'
   },
+  mongoCollection: {
+    doc: 'Collection for mongodb',
+    format: String,
+    default: 'documents',
+    env: 'COLLECTION_NAME'
+  },
+  mongoIndex: {
+    doc: 'Vector index for mongodb',
+    format: String,
+    default: 'vector_document_index',
+    env: 'INDEX_NAME'
+  },
+  searchApiEndpoint: {
+    doc: 'Gov Uk Search API endpoint',
+    format: String,
+    default: 'https://www.gov.uk/api',
+    env: 'SEARCH_ENDPOINT'
+  },
+  openAIKey: {
+    doc: 'Vector index for mongodb',
+    format: String,
+    default: null,
+    env: 'OPENAI_API_KEY'
+  },
   httpProxy: {
     doc: 'HTTP Proxy',
     format: String,
