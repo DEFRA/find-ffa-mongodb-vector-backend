@@ -1,7 +1,13 @@
 import { formatDocumentsAsString } from 'langchain/util/document'
-import { MessagesPlaceholder } from '@langchain/core/prompts'
-import { RunnableSequence, RunnablePassthrough, RunnableWithMessageHistory } from '@langchain/core/runnables'
-import { ChatPromptTemplate } from '@langchain/core/prompts'
+import {
+  ChatPromptTemplate,
+  MessagesPlaceholder
+} from '@langchain/core/prompts'
+import {
+  RunnableSequence,
+  RunnablePassthrough,
+  RunnableWithMessageHistory
+} from '@langchain/core/runnables'
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { getRetriever } from './retriever.js'
 import { createChatHistory } from './chat-history.js'
@@ -23,60 +29,52 @@ const ragSystemPrompt = `Answer the question based on the following context:
   </question>
   If the answer is not in this context, please respond with "I don't know. Here is the context I was given: {context}`
 
-async function getReferences(retriever, question) {
-    const retrievedResults = await retriever.invoke(question)  
-    const references = retrievedResults.map((documents => ({
-        pageTitle: documents.metadata.title,
-        // summary: documents.metadata.summary,
-        baseUrl: documents.metadata.baseUrl,
-    })))
-
-    return references
-}
-
 async function chat(db, question, sessionId) {
-    const retriever = await getRetriever(db)
+  const retriever = getRetriever(db)
 
-    const standaloneQuestionPrompt = ChatPromptTemplate.fromMessages([
-      ['system', standaloneSystemPrompt],
-      new MessagesPlaceholder('history'),
-      ['human', '{question}']
-    ])
+  const standaloneQuestionPrompt = ChatPromptTemplate.fromMessages([
+    ['system', standaloneSystemPrompt],
+    new MessagesPlaceholder('history'),
+    ['human', '{question}']
+  ])
 
-    const questionChain = RunnableSequence.from([
-      standaloneQuestionPrompt,
-      model,
-      new StringOutputParser()
-    ])
+  const questionChain = RunnableSequence.from([
+    standaloneQuestionPrompt,
+    model,
+    new StringOutputParser()
+  ])
 
-    const retrieverChain = RunnablePassthrough.assign({
-      context: questionChain.pipe(retriever).pipe(formatDocumentsAsString)
-    })
+  const retrieverChain = RunnablePassthrough.assign({
+    context: questionChain.pipe(retriever).pipe(formatDocumentsAsString)
+  })
 
-    const ragPrompt = ChatPromptTemplate.fromMessages([
-      ['system', ragSystemPrompt],
-      new MessagesPlaceholder('history'),
-      ['human', '{question}']
-    ])
+  const ragPrompt = ChatPromptTemplate.fromMessages([
+    ['system', ragSystemPrompt],
+    new MessagesPlaceholder('history'),
+    ['human', '{question}']
+  ])
 
-    const ragChain = RunnableSequence.from([
-      retrieverChain,
-      ragPrompt,
-      model,
-      new StringOutputParser()
-    ])
+  const ragChain = RunnableSequence.from([
+    retrieverChain,
+    ragPrompt,
+    model,
+    new StringOutputParser()
+  ])
 
-    const withMessageHistory = new RunnableWithMessageHistory({
+  const withMessageHistory = new RunnableWithMessageHistory({
     runnable: ragChain,
-        getMessageHistory: () => createChatHistory(db, sessionId),
-        inputMessagesKey: 'question',
-        historyMessagesKey: 'history'
-    })
+    getMessageHistory: () => createChatHistory(db, sessionId),
+    inputMessagesKey: 'question',
+    historyMessagesKey: 'history'
+  })
 
-    const response = await withMessageHistory.invoke({ question }, { configurable: { sessionId } })
-    const references = await similaritySearchWithScoreResults(db, question)
+  const response = await withMessageHistory.invoke(
+    { question },
+    { configurable: { sessionId } }
+  )
+  const references = await similaritySearchWithScoreResults(db, question)
 
-    return { question, answer: response, sessionId, references }
+  return { question, answer: response, sessionId, references }
 }
 
 export { chat }

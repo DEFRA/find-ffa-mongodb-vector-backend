@@ -9,7 +9,7 @@ function vectorStore(db) {
     collection,
     indexName,
     textKey: 'embedding_text',
-    embeddingKey: 'embedding',
+    embeddingKey: 'embedding'
   })
 }
 

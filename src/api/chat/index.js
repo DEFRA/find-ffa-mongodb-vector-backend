@@ -1,18 +1,18 @@
-import { chatController } from "./controllers/chat.js"
-  
+import { chatController } from './controllers/chat.js'
+
 const chat = {
-    plugin: {
-        name: 'chat',
-        register: (server) => {
-        server.route([
-            {
-            method: 'POST',
-            path: '/chat',
-            ...chatController
-            }
-        ])
+  plugin: {
+    name: 'chat',
+    register: (server) => {
+      server.route([
+        {
+          method: 'POST',
+          path: '/chat',
+          ...chatController
         }
+      ])
     }
+  }
 }
 
 export { chat }

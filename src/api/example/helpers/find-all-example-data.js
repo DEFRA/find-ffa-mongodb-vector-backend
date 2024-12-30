@@ -9,9 +9,7 @@ import { log } from 'node:console'
 function findAllExampleData(db) {
   log('Finding all example data')
   log('db', db)
-  const cursor = db
-    .collection('documents')
-    .find({}, { projection: { _id: 0 } })
+  const cursor = db.collection('documents').find({}, { projection: { _id: 0 } })
 
   return cursor.toArray()
 }
