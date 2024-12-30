@@ -68,7 +68,7 @@ describe('#startServer', () => {
       )
       expect(mockHapiLoggerInfo).toHaveBeenNthCalledWith(
         3,
-        'MongoDb connected to cdp-node-backend-template'
+        'MongoDb connected to find-ffa-mongodb-vector-backend'
       )
       expect(mockHapiLoggerInfo).toHaveBeenNthCalledWith(
         4,
